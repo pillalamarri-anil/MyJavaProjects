@@ -1,5 +1,6 @@
 package MultiThread.CompletableFuture;
 
+import java.math.BigInteger;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +41,7 @@ public class Client {
         CompletableFuture<String> f3 = CompletableFuture.supplyAsync(()->"Hello");
         f3.thenAccept(result -> System.out.println(result + " World"));
 
-    }
+        BigInteger bigInteger = new BigInteger("1");
 
+    }
 }
