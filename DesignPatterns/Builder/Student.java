@@ -41,6 +41,10 @@ public class Student {
         private String grade;
         private String teacher;
         private String parent;
+
+        private Builder() // make constructor private, so that it can only be called from Student class
+        {
+        }
     
         public Builder setName(String name)
         {
