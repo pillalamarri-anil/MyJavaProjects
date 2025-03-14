@@ -1,5 +1,5 @@
 
-public class Student implements Copy<Student> {
+public class Student implements Prototype<Student> {
 
     private String name;
     private int age;

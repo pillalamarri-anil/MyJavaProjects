@@ -1,6 +1,6 @@
 
 
-public class IntelligentStudent extends Student {
+public class IntelligentStudent extends Employee {
 
     private String intelligence;
 
