@@ -14,7 +14,7 @@ public class IntelligentStudent extends Student {
         this.intelligence = student.intelligence;
     }
 
-    public IntelligentStudent copy() {
+    public IntelligentStudent Clone() {
         return new IntelligentStudent(this);
     }
 

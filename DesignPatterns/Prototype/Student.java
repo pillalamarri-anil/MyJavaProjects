@@ -1,5 +1,5 @@
 
-public class Student implements Prototype<Student> {
+public class Student implements Cloneable {
 
     private String name;
     private int age;
@@ -17,7 +17,7 @@ public class Student implements Prototype<Student> {
         this.address = student.address;
     }
 
-    public Student copy() {
+    public Student Clone() {
         return new Student(this);
     }
 
