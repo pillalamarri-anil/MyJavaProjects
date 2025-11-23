@@ -7,6 +7,33 @@ public class Client {
 
     public static void main(String[] args) {
 
+        List<Employee> employees = List.of(
+                new Employee( 1, "Alice", 60000, "HR" ),
+                new Employee( 2, "Bob", 55000, "IT" ),
+                new Employee( 3, "Charlie", 70000, "IT" ),
+                new Employee( 4, "David", 45000, "Finance" ),
+                new Employee( 5, "Eve", 80000, "HR" ),
+                new Employee( 6, "Frank", 30000, "Finance" ),
+                new Employee( 7, "Grace", 90000, "IT" )
+
+        );
+
+        // filter employees with salary > 50000 and get the employee with max salary
+        Optional<Employee> emp1 = employees.stream().filter(emp -> emp.getSalary() > 50000).
+                collect(Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)));
+
+        // get department of the employee with max salary
+        String dept = emp1.get().getDepartment();
+
+
+        // get employees with max salary in EACH department
+        Map<String, Optional<Employee>> departmentVsMaxSal = employees.stream().filter(emp->emp.getSalary() > 50000).collect(
+                Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+
+
+        departmentVsMaxSal.entrySet().stream().filter(e->e.getValue().isPresent()).
+               max(Comparator.comparingDouble(e->e.getValue().get().getSalary()).map(e->e.getkey())).OrElse(null);
+
 
         List<String> fruits = Arrays.asList("apple", "banana", "orange", "grape", "kiwi");
 
@@ -58,7 +85,6 @@ public class Client {
         mapToInt(String::length).average().orElse(0);
 
 
-
         List<String> sentences1 = Arrays.asList(
                 "Python is a programming language.",
                 "JavaScript is used for web development.",
@@ -69,13 +95,7 @@ public class Client {
                 .filter(e->!e.contains("Java"))
                 .flatMap(s->Arrays.stream(s.split(" ")))
                 .distinct()
-                .count(); 
-
-
-
-
-
-        
+                .count();
 
     }
 }
