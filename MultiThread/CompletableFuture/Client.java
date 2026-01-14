@@ -1,12 +1,17 @@
 package MultiThread.CompletableFuture;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
 
     public static void main(String[] args) {
+
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        list.stream().filter(e -> e % 2 == 0).reduce(0, (a, b) -> a + b);
 
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() ->
         {

@@ -17,7 +17,7 @@ public class Client {
         Adder ac = new Adder(n);
 
         Thread th = new Thread(()->System.out.println("thread running"));
-        th.getState()
+        th.getState();
         
 
         ExecutorService es = java.util.concurrent.Executors.newSingleThreadExecutor();

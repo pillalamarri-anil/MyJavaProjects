@@ -31,10 +31,6 @@ public class Client {
         int[] ans = future.get();
 
         Lock lock = new ReentrantLock();
-        lock.
-
-
-
 
 
         es.shutdown();
