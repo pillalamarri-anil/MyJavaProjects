@@ -1,4 +1,4 @@
-package LambdasStreams.Lambdas;
+package Lamdas;
 
 public class Employee {
     private int id;

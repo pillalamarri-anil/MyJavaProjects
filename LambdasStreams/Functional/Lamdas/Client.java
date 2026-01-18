@@ -1,4 +1,4 @@
-package LambdasStreams.Lambdas;
+package Lamdas;
 
 import javax.swing.text.html.Option;
 import java.util.*;
@@ -7,6 +7,24 @@ import java.util.stream.Collectors;
 public class Client {
 
     public static void main(String[] args) {
+
+
+        // given a string sort the characters based on their frequency in descending order and
+        // if two characters have same frequency sort them based on their natural order
+
+        String input = "treeeeaaabbccccdddddddd";
+
+         String  newString = input.chars().mapToObj(c-> (char)c).collect(Collectors.groupingBy(a->a, Collectors.counting()))
+                 .entrySet().stream().sorted((a, b) -> (int)((b.getValue() == a.getValue()) ? a.getKey() - b.getKey() :
+                 (b.getValue() - a.getValue()))).map(a -> String.valueOf(a.getKey()).repeat((int)a.getValue().intValue())).collect(Collectors.joining());
+
+// given a string, find the 1st character that does not repeat
+        String str = "swiss";
+        Optional<Character> ans = Optional.ofNullable(str.chars().mapToObj(c -> (char) c).collect(Collectors.groupingBy(a -> a, LinkedHashMap::new, Collectors.counting()))
+                .entrySet().stream().filter(e -> e.getValue() == 1L).findFirst().map(e -> e.getKey()).orElse(null));
+
+
+
 
         List<Employee> employees = List.of(
                 new Employee(1, "Alice", 60000, "HR"),
