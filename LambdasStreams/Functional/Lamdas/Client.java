@@ -1,8 +1,11 @@
 package Lamdas;
 
+import com.sun.source.tree.Tree;
+
 import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Client {
 
@@ -102,29 +105,46 @@ public class Client {
                 mapToInt(String::length).average().orElse(0);
 
 
+        // from the sentences that contain "Java", get a list of unique words used in those sentences
         List<String> sentences1 = Arrays.asList(
                 "Python is a programming language.",
                 "JavaScript is used for web development.",
                 "Ruby is known for its simplicity.");
 
+
+        sentences1.stream().filter(a->a.contains("Java")).flatMap(a -> Arrays.stream(a.split(" "))).distinct().collect(Collectors.toList());
+
+
         List<String> uniqueWords = sentences1.stream().filter(s -> s.contains("Java")).
-                flatMap(s -> Arrays.stream(s.split(" "))).
-                distinct().
-                collect(Collectors.toList());
+                flatMap( s-> Arrays.stream(s.split(" "))).distinct().collect(Collectors.toList());
 
 
+        // sort a map based on its values in descendin order, if two values are same sort based on keys in descending order
         Map<String, Integer> mapColorToCount = new HashMap<>();
         mapColorToCount.put("red", 3);
         mapColorToCount.put("blue", 2);
         mapColorToCount.put("green", 1);
         mapColorToCount.put("yellow", 1);
 
-        Map<String, Integer> ans = mapColorToCount.entrySet().stream().sorted((e1, e2) ->
-                (e2.getValue() == e1.getValue()) ? e2.getKey().compareTo(e1.getKey()) : (e1.getValue() - e2.getValue())).collect(
-                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (e1, e2) -> e1, LinkedHashMap::new
-                )
-        );
+        Map<String, Integer> mapColorToCount1 = new HashMap<>();
+        mapColorToCount.put("red", 3);
+        mapColorToCount.put("blue", 2);
+        mapColorToCount.put("green", 1);
+        mapColorToCount.put("yellow", 1);
+
+        // consolidate two maps by summing the values for same keys
+        Stream.concat(mapColorToCount.entrySet().stream(), mapColorToCount1.entrySet().stream()).
+                collect(Collectors.groupingBy(a->a.getKey(), Collectors.summingInt(a->a.getValue())));
+
+        // reduce operation
+        String s =  mapColorToCount.entrySet().stream().reduce("", (a, b) -> a + b.getKey(),
+                (a, b) -> a + b);
+
+
+        mapColorToCount.entrySet().stream().sorted((a, b)-> (b.getValue() == a.getValue()) ? a.getKey().compareTo(b.getKey()) :
+                (b.getValue() - a.getValue())).collect(Collectors.groupingBy(a->a.getKey(), TreeMap::new, Collectors.summingInt(a->a.getValue()))));
+
+
 
     }
 }
