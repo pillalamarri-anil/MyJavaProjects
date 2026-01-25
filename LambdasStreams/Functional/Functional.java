@@ -1,3 +1,4 @@
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +32,21 @@ public class Functional {
 
     Supplier<Integer> random = () -> (int) (Math.random() * 1000);
     random.get();
+
+
+    // how do you specify timout and excetion handling in completablefuture
+        CompletableFuture.supplyAsync(()-> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "Result";
+        }).orTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
+                .exceptionally(ex -> {
+                    System.out.println("Exception: " + ex.getMessage());
+                    return "Default Result";
+                }).thenAccept(result3 -> System.out.println("Completed with: " + result3));
 
     }
 }

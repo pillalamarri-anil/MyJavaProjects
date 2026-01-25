@@ -4,13 +4,61 @@ import com.sun.source.tree.Tree;
 
 import javax.swing.text.html.Option;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Client {
 
     public static void main(String[] args) {
 
+
+        int[] intArr = new int[]{1,1,2,2,2,3,3,3,4,4,4};
+
+        // Important: sort based on frequency then by value
+        List<Integer> sorted = Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(Function.identity(), () -> new TreeMap<>((a,b) -> (b-a)), Collectors.counting()))
+                .entrySet().stream().map(e->IntStream.range(0, e.getValue().intValue()).mapToObj(i->e.getKey()))
+                .flatMap(k->k).collect(Collectors.toList());
+
+        // another way to sort based on frequency then by value
+        Arrays.sort(intArr, (a, b) -> {
+            int freqA = (int) Arrays.stream(intArr).boxed().filter(x -> x == a).count();
+            int freqB = (int) Arrays.stream(intArr).boxed().filter(x -> x ==  b).count();
+            if (freqA != freqB) {
+                return Integer.compare(freqA, freqB);
+            } else {
+                return Integer.compare(b, a);
+            }
+        });
+
+
+
+        String stri = "beautifulday";
+
+        Map<Boolean, List<Character>> partitionedStream = stri.chars().mapToObj(c -> (char)c).collect(Collectors.partitioningBy(c -> Set.of('a', 'e', 'i', 'o', 'u').contains(c)));
+
+        // find most frequent character in a string
+        String s1 = "abbcccddddeeeeeffffff";
+        Optional<Character> mostFrequentChar = Optional.ofNullable(s1.chars().mapToObj(c -> (char)c)
+                .collect(Collectors.groupingBy(Function.identity(), () -> new TreeMap<Character, Long>((a,b)-> Character.compare(b, a)), Collectors.counting()))
+                .entrySet().stream().findFirst().map(e -> e.getKey()).orElse( null));
+
+        // find second most frequent character in a string
+        Arrays.stream(new int[]{1,1,3,4,5}).boxed().collect(Collectors.groupingBy(c -> c, LinkedHashMap::new, Collectors.counting()))
+                .entrySet().stream().skip(1).findFirst().map(e -> e.getKey()).orElse(null);
+
+
+
+
+        // remove duplicates from a string but preserve the order
+        // important: distinct preserves the order of first occurrence
+        String st = "banana";
+        String ans1 = st.chars().mapToObj(c-> (char)c).distinct().map(c-> c.toString()).collect(Collectors.joining());
+
+        // remove duplicates from a string but preserve the order, using LinkedHashSet
+        String ans2 = st.chars().mapToObj(c->(char)c).collect(Collectors.toCollection(LinkedHashSet::new)).stream()
+                .map(c->String.valueOf(c)).collect(Collectors.joining());
 
         // given a string sort the characters based on their frequency in descending order and
         // if two characters have same frequency sort them based on their natural order
@@ -142,7 +190,8 @@ public class Client {
 
 
         mapColorToCount.entrySet().stream().sorted((a, b)-> (b.getValue() == a.getValue()) ? a.getKey().compareTo(b.getKey()) :
-                (b.getValue() - a.getValue())).collect(Collectors.groupingBy(a->a.getKey(), TreeMap::new, Collectors.summingInt(a->a.getValue()))));
+                (b.getValue() - a.getValue())).collect(Collectors.groupingBy(a->a.getKey(), TreeMap::new, Collectors.summingInt(a->a.getValue())));
+
 
 
 
