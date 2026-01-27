@@ -21,16 +21,20 @@ public class Client {
                 .entrySet().stream().map(e->IntStream.range(0, e.getValue().intValue()).mapToObj(i->e.getKey()))
                 .flatMap(k->k).collect(Collectors.toList());
 
+
+        Integer[] integerArray = Arrays.stream(intArr).boxed().toArray(Integer[]::new);
+
         // another way to sort based on frequency then by value
-        Arrays.sort(intArr, (a, b) -> {
+        Arrays.sort(integerArray, ( a, b) -> {
             int freqA = (int) Arrays.stream(intArr).boxed().filter(x -> x == a).count();
             int freqB = (int) Arrays.stream(intArr).boxed().filter(x -> x ==  b).count();
             if (freqA != freqB) {
                 return Integer.compare(freqA, freqB);
             } else {
-                return Integer.compare(b, a);
+                return Integer.compare((Integer) b, (Integer)a);
             }
         });
+
 
 
 
@@ -60,6 +64,24 @@ public class Client {
         String ans2 = st.chars().mapToObj(c->(char)c).collect(Collectors.toCollection(LinkedHashSet::new)).stream()
                 .map(c->String.valueOf(c)).collect(Collectors.joining());
 
+        // Convert List<String> to Map<String, Integer>
+        List<String> words = List.of("apple", "banana", "cherry");
+       Map<String, Integer> mapStrings =  words.stream().collect(Collectors.groupingBy(a -> a, Collectors.summingInt(a -> a.length())));
+
+
+       // find longest string in a list
+        Optional<String> ansString = Optional.ofNullable(words.stream().max((s2, s3)-> Integer.compare(s3.length(), s2.length())).orElse(null));
+
+        // flatten a list of lists
+        List<List<Integer>> data = List.of(List.of(1,2), List.of(3,4));
+        List<Integer> ansData = data.stream().flatMap(list -> list.stream()).collect(Collectors.toList());
+
+        // check if all strings start with capital letter
+        boolean allStartWithCapital = words.stream().allMatch(s -> Character.isUpperCase(s.charAt(0)));
+
+
+
+
         // given a string sort the characters based on their frequency in descending order and
         // if two characters have same frequency sort them based on their natural order
 
@@ -88,23 +110,32 @@ public class Client {
 
         );
 
-        // filter employees with salary > 50000 and get the employee with max salary
+        // get the department which has the employee with  max total salary
+       Optional<String> deptName = Optional.ofNullable(employees.stream().collect(Collectors.groupingBy(a -> a, Collectors.summingDouble(Employee::getSalary)))
+               .entrySet().stream().max((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()))
+               .map(e -> e.getKey().getDepartment()).orElse(null));
+
+
+
+                        // filter employees with salary > 50000 and get the employee with max salary
         Optional<Employee> emp1 = employees.stream().filter(emp -> emp.getSalary() > 50000).
                 collect(Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)));
 
         // get department of the employee with max salary
         String dept = emp1.get().getDepartment();
 
+        // Group employees by department and sort each group by salary DESC
+        employees.stream().collect(Collectors.groupingBy(Employee::getDepartment,
+                Collectors.collectingAndThen(Collectors.toList(),
+                        list -> list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                                .collect(Collectors.toList())
+                )));
 
         // get employees with max salary in EACH department
-        Map<String, Optional<Employee>> departmentVsMaxSal = employees.stream().collect(
-                Collectors.groupingBy(Employee::getDepartment, Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
-
-
-        // get the department which has the employee with the overall max salary
-        Optional<String> deptWithMaxSalEmp =
-                departmentVsMaxSal.entrySet().stream().filter(e -> e.getValue().isPresent()).
-                        max(Comparator.comparingDouble(e -> e.getValue().get().getSalary())).map(e -> e.getValue().isPresent() ? e.getKey() : "");
+         Map< String, List<Employee>> empoyeesByDept =  employees.stream().collect(Collectors.groupingBy(e -> e.getDepartment(), Collectors.collectingAndThen(
+                Collectors.toList(), list -> list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed()).
+                         collect(Collectors.toList())
+        )));
 
 
         List<String> fruits = Arrays.asList("apple", "banana", "orange", "grape", "kiwi");

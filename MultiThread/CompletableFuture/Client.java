@@ -2,8 +2,7 @@ package MultiThread.CompletableFuture;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 public class Client {
 
@@ -12,6 +11,17 @@ public class Client {
         ArrayList<Integer> list = new ArrayList<Integer>();
 
         list.stream().filter(e -> e % 2 == 0).reduce(0, (a, b) -> a + b);
+
+        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(()-> 2);
+        cf1.thenComposeAsync(result -> CompletableFuture.supplyAsync(()-> 3 * result));
+
+        ForkJoinTask ft = ForkJoinTask.adapt(()-> System.out.println("hello"));
+        ft.fork();
+
+        ExecutorService executorService = Executors.newWorkStealingPool(10);
+
+        ExecutorService esVirtual = Executors.newVirtualThreadPerTaskExecutor();
+
 
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() ->
         {
