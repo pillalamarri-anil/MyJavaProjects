@@ -14,13 +14,12 @@ public class Client {
     public static void main(String[] args) {
 
 
-        int[] intArr = new int[]{1,1,2,2,2,3,3,3,4,4,4};
+        int[] intArr = new int[]{1,1,2,2,2,3,3,3,4,4};
 
-        // Important: sort based on frequency then by value
-        List<Integer> sorted = Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(Function.identity(), () -> new TreeMap<>((a,b) -> (b-a)), Collectors.counting()))
-                .entrySet().stream().map(e->IntStream.range(0, e.getValue().intValue()).mapToObj(i->e.getKey()))
-                .flatMap(k->k).collect(Collectors.toList());
-
+        List<Integer> sorted = Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(a -> a, Collectors.counting()))
+                .entrySet().stream().sorted((a,b)-> (int)((a.getValue() == b.getValue()) ? a.getKey() - b.getKey() :
+                        (b.getValue() - a.getValue()))).map((e -> IntStream.range(0, e.getValue().intValue()).mapToObj(i -> e.getKey())))
+                .flatMap(k -> k).collect(Collectors.toList());
 
         Integer[] integerArray = Arrays.stream(intArr).boxed().toArray(Integer[]::new);
 
@@ -36,10 +35,9 @@ public class Client {
         });
 
 
-
-
         String stri = "beautifulday";
 
+        // partition a string into vowels and consonants
         Map<Boolean, List<Character>> partitionedStream = stri.chars().mapToObj(c -> (char)c).collect(Collectors.partitioningBy(c -> Set.of('a', 'e', 'i', 'o', 'u').contains(c)));
 
         // find most frequent character in a string
@@ -164,7 +162,7 @@ public class Client {
 
         // int[] to integer[]
         int[] intArray = {1, 2, 3, 4, 5};
-        Integer[] integerArray = Arrays.stream(intArray).boxed().toArray(Integer[]::new);
+        Integer[] integerArray2 = Arrays.stream(intArray).boxed().toArray(Integer[]::new);
 
         // integer[] to int[]
         Integer[] integerArray1 = {1, 2, 3, 4, 5};

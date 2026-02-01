@@ -22,7 +22,6 @@ public class Client {
 
         ExecutorService esVirtual = Executors.newVirtualThreadPerTaskExecutor();
 
-
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() ->
         {
             try {
