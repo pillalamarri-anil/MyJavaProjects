@@ -40,17 +40,15 @@ public class Client {
         // partition a string into vowels and consonants
         Map<Boolean, List<Character>> partitionedStream = stri.chars().mapToObj(c -> (char)c).collect(Collectors.partitioningBy(c -> Set.of('a', 'e', 'i', 'o', 'u').contains(c)));
 
-        // find most frequent character in a string
+        // find most frequent character in a string, if two characters have same frequency return the lexicographically larger one
         String s1 = "abbcccddddeeeeeffffff";
         Optional<Character> mostFrequentChar = Optional.ofNullable(s1.chars().mapToObj(c -> (char)c)
                 .collect(Collectors.groupingBy(Function.identity(), () -> new TreeMap<Character, Long>((a,b)-> Character.compare(b, a)), Collectors.counting()))
-                .entrySet().stream().findFirst().map(e -> e.getKey()).orElse( null));
+                .entrySet().stream().max((e1, e2)-> Long.compare(e1.getValue(), e2.getValue())).map(e -> e.getKey()).orElse(null));
 
         // find second most frequent character in a string
-        Arrays.stream(new int[]{1,1,3,4,5}).boxed().collect(Collectors.groupingBy(c -> c, LinkedHashMap::new, Collectors.counting()))
-                .entrySet().stream().skip(1).findFirst().map(e -> e.getKey()).orElse(null);
-
-
+        Integer secondMost = Arrays.stream(new int[]{1,1,3,4,5}).boxed().collect(Collectors.groupingBy(c -> c, Collectors.counting()))
+                .entrySet().stream().sorted((a,b)->Long.compare(b.getValue(), a.getValue())).skip(1).findFirst().map(a -> a.getKey()).orElse(null);
 
 
         // remove duplicates from a string but preserve the order
@@ -78,16 +76,13 @@ public class Client {
         boolean allStartWithCapital = words.stream().allMatch(s -> Character.isUpperCase(s.charAt(0)));
 
 
-
-
         // given a string sort the characters based on their frequency in descending order and
         // if two characters have same frequency sort them based on their natural order
 
         String input = "treeeeaaabbccccdddddddd";
 
-         String  newString = input.chars().mapToObj(c-> (char)c).collect(Collectors.groupingBy(a->a, Collectors.counting()))
-                 .entrySet().stream().sorted((a, b) -> (int)((b.getValue() == a.getValue()) ? a.getKey() - b.getKey() :
-                 (b.getValue() - a.getValue()))).map(a -> String.valueOf(a.getKey()).repeat((int)a.getValue().intValue())).collect(Collectors.joining());
+        String newString = input.chars().mapToObj(a -> (char)a).collect(Collectors.groupingBy(a -> a, TreeMap::new, Collectors.counting())).
+                entrySet().stream().sorted((a, b) -> (int)(b.getValue() - a.getValue())).map((a -> a.getKey().toString().repeat((int)a.getValue().intValue()))).collect(Collectors.joining());
 
 // given a string, find the 1st character that does not repeat
         String str = "swiss";
@@ -108,7 +103,7 @@ public class Client {
 
         );
 
-        // get the department which has the employee with  max total salary
+        // get the department which has the employee with  max  salary
        Optional<String> deptName = Optional.ofNullable(employees.stream().collect(Collectors.groupingBy(a -> a, Collectors.summingDouble(Employee::getSalary)))
                .entrySet().stream().max((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()))
                .map(e -> e.getKey().getDepartment()).orElse(null));
@@ -122,12 +117,20 @@ public class Client {
         // get department of the employee with max salary
         String dept = emp1.get().getDepartment();
 
-        // Group employees by department and sort each group by salary DESC
+        // Group employees by department and sort employees each group by salary DESC
         employees.stream().collect(Collectors.groupingBy(Employee::getDepartment,
                 Collectors.collectingAndThen(Collectors.toList(),
                         list -> list.stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
                                 .collect(Collectors.toList())
                 )));
+
+
+        Map< String, List<Employee>> empoyeesByDept1 =   employees.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.toList())).
+                entrySet().stream().collect(Collectors.toMap(e -> e.getKey(),
+                        e -> e.getValue().stream().sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                                .collect(Collectors.toList())
+                ));
+
 
         // get employees with max salary in EACH department
          Map< String, List<Employee>> empoyeesByDept =  employees.stream().collect(Collectors.groupingBy(e -> e.getDepartment(), Collectors.collectingAndThen(
@@ -181,6 +184,10 @@ public class Client {
                 filter(s -> s.contains("Java")).
                 mapToInt(String::length).average().orElse(0);
 
+        // convert a sentence into list of words
+        String sentese = "Java is a programming language.";
+        List<String> strings = Arrays.stream(sentese.split(" ")).collect(Collectors.toList());
+
 
         // from the sentences that contain "Java", get a list of unique words used in those sentences
         List<String> sentences1 = Arrays.asList(
@@ -203,6 +210,10 @@ public class Client {
         mapColorToCount.put("green", 1);
         mapColorToCount.put("yellow", 1);
 
+        mapColorToCount.entrySet().stream().sorted( (a, b) -> (b.getValue() == a.getValue()) ? b.getKey().compareTo(a.getKey()) :
+                (b.getValue() - a.getValue())).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()
+                , (a, b) -> a, LinkedHashMap::new ));
+
         Map<String, Integer> mapColorToCount1 = new HashMap<>();
         mapColorToCount.put("red", 3);
         mapColorToCount.put("blue", 2);
@@ -220,9 +231,6 @@ public class Client {
 
         mapColorToCount.entrySet().stream().sorted((a, b)-> (b.getValue() == a.getValue()) ? a.getKey().compareTo(b.getKey()) :
                 (b.getValue() - a.getValue())).collect(Collectors.groupingBy(a->a.getKey(), TreeMap::new, Collectors.summingInt(a->a.getValue())));
-
-
-
 
     }
 }
