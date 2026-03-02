@@ -14,6 +14,21 @@ public class Client {
     public static void main(String[] args) {
 
 
+        // generate febonacci series using stream
+
+        List<Integer> febonacci = Stream.iterate(new int[]{0, 1}, a -> new int[]{a[1], a[0] + a[1]}).
+        limit(10).map(a -> a[0]).collect(Collectors.toList());
+
+
+        // sum of first 10 natural numbers using stream
+        int sum = IntStream.rangeClosed(1, 10).sum();
+
+        // reverse each word in a sentence
+        String sentence = "Hello World";
+        Arrays.stream(sentence.split(" ")).map(e -> new StringBuilder(e).reverse().toString()).collect(Collectors.joining(" "));
+
+
+
         int[] intArr = new int[]{1,1,2,2,2,3,3,3,4,4};
 
         List<Integer> sorted = Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(a -> a, Collectors.counting()))
