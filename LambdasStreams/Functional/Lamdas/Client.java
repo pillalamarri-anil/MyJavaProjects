@@ -13,6 +13,17 @@ public class Client {
 
     public static void main(String[] args) {
 
+        int[] A = new int[]{1, 2, 3, 4, 5};
+
+        // sort based on 10th place value, if two elements have same 10th place value sort based on original value in descending order
+        Object[] B = Arrays.stream(A).mapToObj(a -> (Integer)a).sorted(
+                (a, b) -> ((a%100 - a % 10) == (b%100 - b % 10)) ? b-a : (a%100 - a % 10) - (b%100 - b % 10))
+                .toArray();
+
+        Arrays.stream(B).mapToInt(a -> (Integer)a).toArray();
+
+
+
         // check if all of set A are present in set B
         Set<Integer> setA = Set.of(1, 2, 3);
         Set<Integer> setB = Set.of(3, 2, 1, 4, 5);
