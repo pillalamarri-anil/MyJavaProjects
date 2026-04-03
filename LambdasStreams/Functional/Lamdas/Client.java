@@ -13,11 +13,24 @@ public class Client {
 
     public static void main(String[] args) {
 
+        // check if all of set A are present in set B
+        Set<Integer> setA = Set.of(1, 2, 3);
+        Set<Integer> setB = Set.of(3, 2, 1, 4, 5);
+
+        boolean allPresent = setA.stream().allMatch(a -> setB.contains(a));
+
+        // check if all of HashMap A's keys are present in HashMap B freq of elements in B more or equal to freq of elements in A
+        Map<Integer, Integer> mapA = Map.of(1, 2, 2, 3);
+        Map<Integer, Integer> mapB = Map.of(1, 3, 2, 4, 3, 1);
+
+        boolean allPresentWithFreq = mapA.entrySet().stream().allMatch((a) -> mapB.getOrDefault(a.getKey(), 0) >= a.getValue());
 
         // generate febonacci series using stream
+        // infinite stream is generated using iterate, and then we limit it to 10 elements
+        // it is not possible to use infinite streams without lazily limiting them.
 
-        List<Integer> febonacci = Stream.iterate(new int[]{0, 1}, a -> new int[]{a[1], a[0] + a[1]}).
-        limit(10).map(a -> a[0]).collect(Collectors.toList());
+        List<Integer> febonacci = Stream.iterate(new int[]{0,1}, a -> new int[]{a[1], a[0] + a[1]}).limit(10)
+                .map(a -> a[0]).collect(Collectors.toList());
 
 
         // sum of first 10 natural numbers using stream
@@ -25,12 +38,18 @@ public class Client {
 
         // reverse each word in a sentence
         String sentence = "Hello World";
-        Arrays.stream(sentence.split(" ")).map(e -> new StringBuilder(e).reverse().toString()).collect(Collectors.joining(" "));
 
+        String reversed = Arrays.stream(sentence.split(" ")).map(s -> new StringBuilder(s).reverse()).collect(Collectors.joining(" "));
 
 
         int[] intArr = new int[]{1,1,2,2,2,3,3,3,4,4};
 
+
+        Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(Function.<Integer>identity(), () -> new TreeMap<Integer, Long>((a,b)-> Integer.compare(b, a)),
+                        Collectors.counting())).entrySet().stream().sorted((a,b)-> (int)(b.getValue() - a.getValue())).map( a -> IntStream.rangeClosed(0, (int)(long)a.getValue()).mapToObj(i-> a.getKey()))
+                .flatMap(k -> k).collect(Collectors.toList());
+
+        // sort the array based on frequency of elements in descending order, if two elements have same frequency sort them based on their natural order in ascending order
         List<Integer> sorted = Arrays.stream(intArr).boxed().collect(Collectors.groupingBy(a -> a, Collectors.counting()))
                 .entrySet().stream().sorted((a,b)-> (int)((a.getValue() == b.getValue()) ? a.getKey() - b.getKey() :
                         (b.getValue() - a.getValue()))).map((e -> IntStream.range(0, e.getValue().intValue()).mapToObj(i -> e.getKey())))
@@ -118,14 +137,11 @@ public class Client {
 
         );
 
-        // get the department which has the employee with  max  salary
-       Optional<String> deptName = Optional.ofNullable(employees.stream().collect(Collectors.groupingBy(a -> a, Collectors.summingDouble(Employee::getSalary)))
-               .entrySet().stream().max((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()))
-               .map(e -> e.getKey().getDepartment()).orElse(null));
 
+        employees.stream().max( Comparator.comparingDouble(e -> e.getSalary()))
+                .map(e -> e.getDepartment()).orElse(null);
 
-
-                        // filter employees with salary > 50000 and get the employee with max salary
+        // filter employees with salary > 50000 and get the employee with max salary
         Optional<Employee> emp1 = employees.stream().filter(emp -> emp.getSalary() > 50000).
                 collect(Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary)));
 
@@ -218,7 +234,7 @@ public class Client {
                 flatMap( s-> Arrays.stream(s.split(" "))).distinct().collect(Collectors.toList());
 
 
-        // sort a map based on its values in descendin order, if two values are same sort based on keys in descending order
+        // sort a map based on its values in descending order, if two values are same sort based on keys in descending order
         Map<String, Integer> mapColorToCount = new HashMap<>();
         mapColorToCount.put("red", 3);
         mapColorToCount.put("blue", 2);

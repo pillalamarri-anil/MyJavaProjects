@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Client {
 
@@ -13,6 +15,7 @@ public class Client {
         Scanner sc = new Scanner(System.in);
 
         int n = sc.nextInt();
+
 
         Adder ac = new Adder(n);
 
