@@ -1,12 +1,6 @@
 package MultiThread.ThreadLocal;
 
 
-
-private class ConnectionPool
-{
-    private
-}
-
 // ThreadLocal allows you to create variables that are local to each thread.
 // Each thread has its own copy of the variable, and changes made by one thread do not affect the variable in other threads.
 // This is particularly useful for maintaining thread-specific data without the need for synchronization.

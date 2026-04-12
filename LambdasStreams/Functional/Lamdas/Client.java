@@ -13,6 +13,15 @@ public class Client {
 
     public static void main(String[] args) {
 
+        // Given an array of non negative integers, form largest number out of it. Output in string format
+
+        int[] arr = new int[]{3, 30, 34, 5, 9};
+
+        String largestNumber = Arrays.stream(arr).mapToObj(a -> String.valueOf(a)).sorted(
+                (a, b) -> Integer.valueOf("" + a + b ) - Integer.valueOf(" + b + a")).collect(Collectors.joining());
+
+
+
         int[] A = new int[]{1, 2, 3, 4, 5};
 
         // sort based on 10th place value, if two elements have same 10th place value sort based on original value in descending order
